@@ -21,11 +21,13 @@ def upset_factor(seed_winner, seed_loser):
     return winner_factor - loser_factor
 
 def find_entrant_pages(tournament_name, event_name):
+    """finds total pages of entrants for pagination purposes. default n = 25"""
     tournament_with_bracket = initial.tournament_show_with_brackets(tournament_name, event_name)
     total_entrants = tournament_with_bracket['entrants']
     return (total_entrants // 25) + 1
 
 def findSets(tournament_name, event_name):
+    """finds every set of an event"""
     total_sets = []
     i = 1
     sets = initial.tournament_show_sets(tournament_name,event_name, i)
@@ -36,6 +38,7 @@ def findSets(tournament_name, event_name):
     return total_sets
 
 def findEntrants(tournament_name, event_name):
+    """finds every entrant of an event"""
     try:
         entrant_pages = find_entrant_pages(tournament_name, event_name)
         entrants = []
@@ -48,6 +51,15 @@ def findEntrants(tournament_name, event_name):
 
 def findSeed(tag, seeding):
     return seeding[tag]
+
+def findSeeding(entrants):
+    """creates dictionary of tags and their corresponding seed; entrants defined by findEntrants()"""
+    seeding = {}
+    for entrant in entrants:
+        tag = entrant['tag']
+        seed = entrant['seed']
+        seeding[tag] = seed
+    return seeding
 
 def findUpsets(sets, seeding, isCSV = False):
     upsets = ""
@@ -70,7 +82,8 @@ def findUpsets(sets, seeding, isCSV = False):
         raise
     return upsets
 
-def removeTeam(tag):        
+def removeTeam(tag):
+    """removes everything before a | in a nametag; not proper sanitisation"""
     if ' | ' in tag:
         team_entrant = tag.split(' | ')
         tag = team_entrant[1]
@@ -83,17 +96,8 @@ def displaySets(sets):
             entrant2Name = removeTeam(set['entrant2Name'])
             print(f"{entrant1Name:15} {set['entrant1Score']:1d} - {set['entrant2Score']:1d} {' ':4} {entrant2Name:15}", "   ", set['bracketName'], set['fullRoundText'])
 
-def findResults(tournament_name, event_name):
-    try:
-        entrants = findEntrants(tournament_name, event_name)
-        results = {}
-        for entrant in entrants:
-            results[entrant['tag']] = entrant['finalPlacement']
-    except:
-        print("Exception occurred in findPlacements")
-    return results
-
 def csvResults(entrants, countries = False):
+    """generates results in csv format to the terminal; countries is a boolean, false by default"""
     if countries:
         csv = "Seed;Tag;Placement;Seed Performance;Country\n"
     else:
