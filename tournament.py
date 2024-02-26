@@ -62,6 +62,7 @@ def findSeeding(entrants):
     return seeding
 
 def findUpsets(sets, seeding, isCSV = False):
+    # TODO: country data
     upsets = ""
     if isCSV:
         upsets = "Winner;Seed;Loser;Seed;Upset Factor;Round\n"
@@ -135,16 +136,26 @@ def findCountry(tag, entrants):
         raise
     return country
 
-if __name__ == "__main__":    
-
-    initial = pysmashgg.SmashGG(keys.API, True)
-    tournament_name = "valhalla-iv"
-    event_name = "main-ultimate-singles"
-    entrants = findEntrants(tournament_name, event_name)
-    
+def findRepresentants(entrants, country):
+    """finds entrants of a specific country; country is allowed to be a list of countries. this sucks currently"""
+    #TODO: improve
+    reps = []
     for entrant in entrants:
-        if entrant['tag'] == "Dragon":
-            entrant['seed'] = 41
+        if findCountry(entrant['tag'], entrants) in country:
+            reps.append(entrant)
+    return reps
 
+if __name__ == "__main__":    
+    countries_nordic = ["Sweden", "Iceland", "Finland", "Norway", "Denmark"]
+    initial = pysmashgg.SmashGG(keys.API, True)
+    tournament_name = "king-con"
+    event_name = "ssbu-1v1"
+
+    entrants = findEntrants(tournament_name, event_name)
     csv = csvResults(entrants, countries = True)
     print(csv)
+
+    seeding = findSeeding(entrants)
+    sets = findSets(tournament_name, event_name)
+    upsets = findUpsets(sets, seeding, isCSV = True)
+    print(upsets)
