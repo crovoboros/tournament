@@ -72,13 +72,13 @@ def findUpsets(sets, seeding, isCSV = False):
                 winnerSeed = findSeed(set['winnerName'], seeding)
                 loserSeed = findSeed(set['loserName'], seeding)
                 upsetFactor = upset_factor(winnerSeed, loserSeed)
-                winnerName = removeTeam(set['winnerName'])
-                loserName = removeTeam(set['loserName'])
+                winnerName = removeTeam(set['winnerName'])[:16]
+                loserName = removeTeam(set['loserName'])[:16]
                 if upsetFactor > 0:
                     if isCSV:
                         upsets += f"{winnerName};{winnerSeed};{loserName};{loserSeed};{upsetFactor};{set['bracketName']} - {set['fullRoundText']}\n"
                     else:
-                        upsets += f"{winnerName:15s} [Seed {winnerSeed:3d}]   W - L   {loserName:15s} [Seed {loserSeed:3d}]   UF{upsetFactor:2d}    {set['bracketName']} {set['fullRoundText']}\n"
+                        upsets += f"{winnerName:16s} [Seed {winnerSeed:3d}]   W - L   {loserName:16s} [Seed {loserSeed:3d}]   UF{upsetFactor:2d}    {set['bracketName']} {set['fullRoundText']}\n"
     except:
         raise
     return upsets
@@ -148,18 +148,16 @@ def findRepresentants(entrants, country):
 if __name__ == "__main__":    
     countries_nordic = ["Sweden", "Iceland", "Finland", "Norway", "Denmark"]
     initial = pysmashgg.SmashGG(keys.API, True)
-    tournament_name = "smash-jotunheimen-kt-17"
-    event_name = "main-ultimate-singles"
+    tournament_names = ["smashborg-siege"]
+    event_name = "ultimate-singles"
 
-    entrants = findEntrants(tournament_name, event_name)
-    csv = csvResults(entrants)
+    for tournament_name in tournament_names:
+        entrants = findEntrants(tournament_name, event_name)
+        csv = csvResults(entrants)
+        print(tournament_name)
+        print(csv)
 
-    print(csv)
-
-    sets = findSets(tournament_name, event_name)
-
-    seeding = findSeeding(entrants)
-
-    upsets = findUpsets(sets, seeding, isCSV = True)
-
-    print(upsets)
+        seeding = findSeeding(entrants)
+        sets = findSets(tournament_name, event_name)
+        upsets = findUpsets(sets, seeding, isCSV=True)
+        print(upsets)
