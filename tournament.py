@@ -148,16 +148,22 @@ def findRepresentants(entrants, country):
 if __name__ == "__main__":    
     countries_nordic = ["Sweden", "Iceland", "Finland", "Norway", "Denmark"]
     initial = pysmashgg.SmashGG(keys.API, True)
-    tournament_names = ["smashborg-siege"]
+    tournament_names = ["gg-bergen-24-8-2024"]
     event_name = "ultimate-singles"
 
     for tournament_name in tournament_names:
-        entrants = findEntrants(tournament_name, event_name)
-        csv = csvResults(entrants)
-        print(tournament_name)
-        print(csv)
+        resultsFinder = True
+        upsetFinder = False
 
-        seeding = findSeeding(entrants)
-        sets = findSets(tournament_name, event_name)
-        upsets = findUpsets(sets, seeding, isCSV=True)
-        print(upsets)
+        entrants = findEntrants(tournament_name, event_name)
+
+        if resultsFinder:
+            csv = csvResults(entrants)
+            print(tournament_name)
+            print(csv)
+
+        if upsetFinder:
+            seeding = findSeeding(entrants)
+            sets = findSets(tournament_name, event_name)
+            upsets = findUpsets(sets, seeding, isCSV=True)
+            print(upsets)
